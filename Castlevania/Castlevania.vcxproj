@@ -91,6 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
+      <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3dx9.lib;d3d9.lib;dxguid.lib;dinput8.lib;dxerr.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -102,6 +103,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
+      <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3dx9.lib;d3d9.lib;dxguid.lib;dinput8.lib;dxerr.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -115,6 +117,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
+      <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -130,6 +133,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
+      <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -141,6 +145,7 @@
     <ClInclude Include="debug.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Ground.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Textures.h" />
   </ItemGroup>
@@ -148,6 +153,7 @@
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Ground.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />

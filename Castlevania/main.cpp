@@ -26,22 +26,21 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Textures.h"
-
+#include "Ground.h"
 #define WINDOW_CLASS_NAME L"SampleWindow"
-#define MAIN_WINDOW_TITLE L"04 - Collision"
+#define MAIN_WINDOW_TITLE L"CASTLEVANIA"
 
-#define BACKGROUND_COLOR D3DCOLOR_XRGB(255, 255, 200)
-#define SCREEN_WIDTH 600
-#define SCREEN_HEIGHT 600
+#define BACKGROUND_COLOR D3DCOLOR_XRGB(0, 0, 255)
+#define SCREEN_WIDTH 500
+#define SCREEN_HEIGHT 300
 
 #define MAX_FRAME_RATE 120
 
-#define ID_TEX_MARIO 0
+#define ID_TEX_SIMON
 #define ID_TEX_ENEMY 10
-#define ID_TEX_MISC 20
+#define ID_TEX_GROUND 20
 
 CGame *game;
-
 vector<LPGAMEOBJECT> objects;
 
 //class CSampleKeyHander : public CKeyEventHandler
@@ -89,8 +88,24 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 */
 void LoadResources()
 {
-
-
+	CTextures * textures = CTextures::GetInstance();
+	textures->Add(ID_TEX_GROUND, L"Textures\\2.png", D3DCOLOR_XRGB(255, 255, 255));
+	CSprites * sprites = CSprites::GetInstance();
+	CAnimations * animations = CAnimations::GetInstance();
+	LPDIRECT3DTEXTURE9 texGround = textures->Get(ID_TEX_GROUND);
+	//ADD SPRITES OF GROUND
+	sprites->Add(10001, 0, 0,31,31 ,texGround);
+	LPANIMATION ani;
+	ani = new CAnimation(100);
+	ani->Add(10001);
+	animations->Add(100, ani);
+	for (int i = 0; i < SCREEN_WIDTH / 31; i++)
+	{
+		Ground *ground = new Ground();
+		ground->AddAnimation(100);
+		ground->SetPosition(0+31*i,230);
+		objects.push_back(ground);
+	}
 }
 
 /*
@@ -134,8 +149,10 @@ void Render()
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 
 		for (int i = 0; i < objects.size(); i++)
+		{
 			objects[i]->Render();
-
+			OutputDebugString(L"alo alo ");
+		}
 		spriteHandler->End();
 		d3ddv->EndScene();
 	}
