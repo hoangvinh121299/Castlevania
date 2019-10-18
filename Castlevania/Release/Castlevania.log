@@ -3,13 +3,13 @@
   c:\program files (x86)\microsoft directx sdk (june 2010)\include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
 d:\nhập môn phát triển game\castlevania\castlevania\game.h(6): warning C4005: 'DIRECTINPUT_VERSION': macro redefinition
   c:\program files (x86)\microsoft directx sdk (june 2010)\include\dinput.h(42): note: see previous definition of 'DIRECTINPUT_VERSION'
-d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(106): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(121): warning C4018: '<': signed/unsigned mismatch
-d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(126): warning C4018: '<': signed/unsigned mismatch
-d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(151): warning C4018: '<': signed/unsigned mismatch
+d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(159): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(222): warning C4018: '<': signed/unsigned mismatch
+d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(227): warning C4018: '<': signed/unsigned mismatch
+d:\nhập môn phát triển game\castlevania\castlevania\main.cpp(252): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  1 of 871 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  0 of 886 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Castlevania.vcxproj -> D:\Nhập môn phát triển Game\Castlevania\Release\Castlevania.exe

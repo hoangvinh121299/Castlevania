@@ -1,4 +1,4 @@
-/* =============================================================
+﻿/* =============================================================
 	INTRODUCTION TO GAME PROGRAMMING SE102
 
 	SAMPLE 04 - COLLISION
@@ -27,6 +27,7 @@
 #include "GameObject.h"
 #include "Textures.h"
 #include "Ground.h"
+#include "Simon.h"
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"CASTLEVANIA"
 
@@ -36,37 +37,67 @@
 
 #define MAX_FRAME_RATE 120
 
-#define ID_TEX_SIMON
+#define ID_TEX_SIMON 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_GROUND 20
 
 CGame *game;
+Simon *simon;
 vector<LPGAMEOBJECT> objects;
 
-//class CSampleKeyHander : public CKeyEventHandler
-//{
-//	virtual void KeyState(BYTE *states);
-//	virtual void OnKeyDown(int KeyCode);
-//	virtual void OnKeyUp(int KeyCode);
-//};
-//
-//CSampleKeyHander * keyHandler;
-//
-//void CSampleKeyHander::OnKeyDown(int KeyCode)
-//{
-//
-//}
-//
-//void CSampleKeyHander::OnKeyUp(int KeyCode)
-//{
-//	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
-//}
-//
-//void CSampleKeyHander::KeyState(BYTE *states)
-//{
-//	
-//}
-//
+class CSampleKeyHander : public CKeyEventHandler
+{
+	virtual void KeyState(BYTE *states);
+	virtual void OnKeyDown(int KeyCode);
+	virtual void OnKeyUp(int KeyCode);
+};
+
+CSampleKeyHander * keyHandler;
+
+void CSampleKeyHander::OnKeyDown(int KeyCode)
+{
+	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+	switch (KeyCode)
+	{
+	case DIK_SPACE:
+		simon->SetState(SIMON_STATE_JUMP);
+		break;
+	case DIK_Z:
+		simon->SetState(SIMON_STATE_ATTACK);
+		break;
+	//case DIK_DOWN:
+	//	simon->SetState(SIMON_STATE_SIT);
+	
+	//case DIK_A: // reset
+	//	mario->SetState(MARIO_STATE_IDLE);
+	//	mario->SetLevel(MARIO_LEVEL_BIG);
+	//	mario->SetPosition(50.0f, 0.0f);
+	//	mario->SetSpeed(0, 0);
+	//	break;
+	}
+}
+
+void CSampleKeyHander::OnKeyUp(int KeyCode)
+{
+	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
+}
+
+void CSampleKeyHander::KeyState(BYTE *states)
+{
+	// disable control key when Mario die 
+	if (simon->GetState() == SIMON_STATE_DIE) return;
+	/*if (game->IsKeyDown(DIK_A))
+		simon->SetState(SIMON_STATE_ATTACK);*/
+	else if (game->IsKeyDown(DIK_DOWN))
+		simon->SetState(SIMON_STATE_SIT);
+	else if (game->IsKeyDown(DIK_RIGHT))
+		simon->SetState(SIMON_STATE_WALKING_RIGHT);
+	else if (game->IsKeyDown(DIK_LEFT))
+		simon->SetState(SIMON_STATE_WALKING_LEFT); 
+	else
+		simon->SetState(SIMON_STATE_IDLE);
+}
+
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message) {
@@ -89,12 +120,34 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void LoadResources()
 {
 	CTextures * textures = CTextures::GetInstance();
-	textures->Add(ID_TEX_GROUND, L"Textures\\2.png", D3DCOLOR_XRGB(255, 255, 255));
+	textures->Add(ID_TEX_GROUND, L"Textures\\Ground\\2.png", D3DCOLOR_XRGB(255, 255, 255));
+	textures->Add(ID_TEX_SIMON, L"Textures\\Simon\\SIMON.png", D3DCOLOR_XRGB(255, 0, 255));
 	CSprites * sprites = CSprites::GetInstance();
 	CAnimations * animations = CAnimations::GetInstance();
-	LPDIRECT3DTEXTURE9 texGround = textures->Get(ID_TEX_GROUND);
 	//ADD SPRITES OF GROUND
+	LPDIRECT3DTEXTURE9 texGround = textures->Get(ID_TEX_GROUND);
 	sprites->Add(10001, 0, 0,31,31 ,texGround);
+	//ADD SPRITES OF SIMON
+	LPDIRECT3DTEXTURE9 texSimon = textures->Get(ID_TEX_SIMON);
+	sprites->Add(20001,431,2,468,65,texSimon);//SIMON IDLE RIGHT
+	sprites->Add(20002, 374, 2, 400, 65, texSimon);
+	sprites->Add(20003, 314, 2, 340, 65, texSimon);
+	sprites->Add(20004, 254, 2, 280, 65, texSimon);
+
+	sprites->Add(20011, 491, 2, 528, 65, texSimon);//SIMON IDLE LEFT
+	sprites->Add(20012, 551, 2, 588, 65, texSimon);
+	sprites->Add(20013, 611, 2, 648, 65, texSimon);
+	sprites->Add(20014, 671, 2, 708, 65, texSimon);
+
+	sprites->Add(20021, 194, 2, 240, 65, texSimon);//Simon jump right
+
+	sprites->Add(20031, 731, 2, 758, 65, texSimon);//Simon jump left
+
+	sprites->Add(20041, 130, 2, 177, 65, texSimon);//simon atack right
+	sprites->Add(20042, 70, 2, 115, 65, texSimon);
+	sprites->Add(20043, 10, 2, 62, 65, texSimon);
+	//sprites->Add(20041, 194, 2, 240, 65, texSimon);//Simon jump right
+	//Add Animation Ground
 	LPANIMATION ani;
 	ani = new CAnimation(100);
 	ani->Add(10001);
@@ -106,6 +159,54 @@ void LoadResources()
 		ground->SetPosition(0+31*i,230);
 		objects.push_back(ground);
 	}
+	//Add Animation Simon
+	 simon = new Simon();
+
+	ani = new CAnimation(100);//Simon_Ani_IDLE_RIGHT
+	ani->Add(20001);
+	animations ->Add(200, ani);
+	simon->AddAnimation(200);
+
+	ani = new CAnimation(100);//Simon_Ani_IDLE_left
+	ani->Add(20011);
+	animations->Add(201, ani);
+	simon->AddAnimation(201);
+
+	ani = new CAnimation(100);//simon walking right
+	ani->Add(20001);
+	ani->Add(20002);
+	ani->Add(20003);
+	ani->Add(20004);
+	animations->Add(210, ani);
+	simon->AddAnimation(210);
+
+	ani = new CAnimation(100);//simon walking left
+	ani->Add(20011);
+	ani->Add(20012);
+	ani->Add(20013);
+	ani->Add(20014);
+	animations->Add(211, ani);//simon walking left
+	simon->AddAnimation(211);
+	
+	ani = new CAnimation(100);//Simon_Ani_jump_RIGHT
+	ani->Add(20021);
+	animations->Add(221, ani);
+	simon->AddAnimation(221);
+	
+	ani = new CAnimation(100);//Simon_Ani_jump_left
+	ani->Add(20031);
+	animations->Add(231, ani);
+	simon->AddAnimation(231);
+
+	ani = new CAnimation(100);//simon atack right
+	ani->Add(20041);
+	ani->Add(20042);
+	ani->Add(20043);
+	animations->Add(241, ani);
+	simon->AddAnimation(241);
+
+	simon->SetPosition(0.0f, 100.0f);
+	objects.push_back(simon);
 }
 
 /*
@@ -125,7 +226,7 @@ void Update(DWORD dt)
 
 	for (int i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		objects[i]->Update(dt );
 	}
 
 
@@ -151,7 +252,7 @@ void Render()
 		for (int i = 0; i < objects.size(); i++)
 		{
 			objects[i]->Render();
-			OutputDebugString(L"alo alo ");
+		
 		}
 		spriteHandler->End();
 		d3ddv->EndScene();
@@ -215,7 +316,7 @@ int Run()
 	DWORD frameStart = GetTickCount();
 	DWORD tickPerFrame = 1000 / MAX_FRAME_RATE;
 
-	while (!done)
+      	while (!done)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -235,7 +336,7 @@ int Run()
 		{
 			frameStart = now;
 
-			/*game->ProcessKeyboard();*/
+			game->ProcessKeyboard();
 
 			Update(dt);
 			Render();
@@ -254,8 +355,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game = CGame::GetInstance();
 	game->Init(hWnd);
 
-	/*keyHandler = new CSampleKeyHander();
-	game->InitKeyboard(keyHandler);*/
+	keyHandler = new CSampleKeyHander();
+	game->InitKeyboard(keyHandler);
 	LoadResources();
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
@@ -264,3 +365,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	return 0;
 }
+//FIX LỖI SIMON, ADD THÊM HIỆU ỨNG TẤN CÔNG, CHO SIMON TƯƠNG TÁC TRỌNG LỰC
