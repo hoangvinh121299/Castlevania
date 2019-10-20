@@ -1,4 +1,4 @@
-#include "Sprites.h"
+﻿#include "Sprites.h"
 #include "Game.h"
 #include "debug.h"
 
@@ -71,7 +71,11 @@ void CAnimation::Render(float x, float y, int alpha)
 
 	frames[currentFrame]->GetSprite()->Draw(x, y, alpha);
 }
-
+void CAnimation::ResetAni() //Hàm này để reset animation
+{
+	currentFrame = -1;
+	lastFrameTime = 0;
+}
 CAnimations * CAnimations::__instance = NULL;
 
 CAnimations * CAnimations::GetInstance()

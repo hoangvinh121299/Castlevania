@@ -31,8 +31,8 @@
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"CASTLEVANIA"
 
-#define BACKGROUND_COLOR D3DCOLOR_XRGB(0, 0, 255)
-#define SCREEN_WIDTH 500
+#define BACKGROUND_COLOR D3DCOLOR_XRGB(255,255, 200)
+#define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 300
 
 #define MAX_FRAME_RATE 120
@@ -63,8 +63,13 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 		simon->SetState(SIMON_STATE_JUMP);
 		break;
 	case DIK_Z:
-		simon->SetState(SIMON_STATE_ATTACK);
+	{
+		if (simon->attack == 0)
+		{
+			simon->SetState(SIMON_STATE_ATTACK);
+		}
 		break;
+	}
 	//case DIK_DOWN:
 	//	simon->SetState(SIMON_STATE_SIT);
 	
@@ -84,10 +89,10 @@ void CSampleKeyHander::OnKeyUp(int KeyCode)
 
 void CSampleKeyHander::KeyState(BYTE *states)
 {
+	if (simon->attack != 0)
+		return;
 	// disable control key when Mario die 
 	if (simon->GetState() == SIMON_STATE_DIE) return;
-	/*if (game->IsKeyDown(DIK_A))
-		simon->SetState(SIMON_STATE_ATTACK);*/
 	else if (game->IsKeyDown(DIK_DOWN))
 		simon->SetState(SIMON_STATE_SIT);
 	else if (game->IsKeyDown(DIK_RIGHT))
@@ -122,6 +127,7 @@ void LoadResources()
 	CTextures * textures = CTextures::GetInstance();
 	textures->Add(ID_TEX_GROUND, L"Textures\\Ground\\2.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_SIMON, L"Textures\\Simon\\SIMON.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 	CSprites * sprites = CSprites::GetInstance();
 	CAnimations * animations = CAnimations::GetInstance();
 	//ADD SPRITES OF GROUND
@@ -146,6 +152,18 @@ void LoadResources()
 	sprites->Add(20041, 130, 2, 177, 65, texSimon);//simon atack right
 	sprites->Add(20042, 70, 2, 115, 65, texSimon);
 	sprites->Add(20043, 10, 2, 62, 65, texSimon);
+
+	sprites->Add(20051, 792, 2, 829, 65, texSimon);//simon atack left
+	sprites->Add(20052, 848, 2,897 , 65, texSimon);
+	sprites->Add(20053, 908, 2, 958, 65, texSimon);
+
+	sprites->Add(20061,0, 67, 40, 134, texSimon);//simon sit atack right
+	sprites->Add(20062, 430,132, 481, 195, texSimon);
+	sprites->Add(20063, 370, 132, 421, 195,texSimon);
+
+	sprites->Add(20071, 915, 67, 955, 134, texSimon);//simon sit atack left
+	sprites->Add(20072, 491, 132, 528, 195, texSimon);
+	sprites->Add(20073, 550, 132, 598, 195, texSimon);
 	//sprites->Add(20041, 194, 2, 240, 65, texSimon);//Simon jump right
 	//Add Animation Ground
 	LPANIMATION ani;
@@ -198,12 +216,38 @@ void LoadResources()
 	animations->Add(231, ani);
 	simon->AddAnimation(231);
 
-	ani = new CAnimation(100);//simon atack right
+	ani = new CAnimation(100);//simon atack right 
+	ani->Add(20001);
 	ani->Add(20041);
 	ani->Add(20042);
 	ani->Add(20043);
 	animations->Add(241, ani);
 	simon->AddAnimation(241);
+
+	ani = new CAnimation(100);//simon atack left
+	ani->Add(20011);
+	ani->Add(20051);
+	ani->Add(20052);
+	ani->Add(20053);
+	animations->Add(251, ani);
+	simon->AddAnimation(251);
+
+
+	ani = new CAnimation(100);//simon atack sit right
+	ani->Add(20021);
+	ani->Add(20061);
+	ani->Add(20062);
+	ani->Add(20063);
+	animations->Add(261, ani);
+	simon->AddAnimation(261);
+
+	ani = new CAnimation(100);//simon atack sit left
+	ani->Add(20031);
+	ani->Add(20071);
+	ani->Add(20072);
+	ani->Add(20073);
+	animations->Add(271, ani);
+	simon->AddAnimation(271);
 
 	simon->SetPosition(0.0f, 100.0f);
 	objects.push_back(simon);
@@ -228,9 +272,6 @@ void Update(DWORD dt)
 	{
 		objects[i]->Update(dt );
 	}
-
-
-
 }
 
 /*
