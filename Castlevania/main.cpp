@@ -28,6 +28,7 @@
 #include "Textures.h"
 #include "Ground.h"
 #include "Simon.h"
+#include "Whip.h"
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"CASTLEVANIA"
 
@@ -40,9 +41,11 @@
 #define ID_TEX_SIMON 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_GROUND 20
+#define ID_TEX_WHIP 30
 
 CGame *game;
 Simon *simon;
+//Whip *whip;
 vector<LPGAMEOBJECT> objects;
 
 class CSampleKeyHander : public CKeyEventHandler
@@ -60,7 +63,10 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
-		simon->SetState(SIMON_STATE_JUMP);
+		if(simon->getisJumping()==0)
+		{
+			simon->SetState(SIMON_STATE_JUMP);
+		}
 		break;
 	case DIK_Z:
 	{
@@ -128,6 +134,7 @@ void LoadResources()
 	textures->Add(ID_TEX_GROUND, L"Textures\\Ground\\2.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_SIMON, L"Textures\\Simon\\SIMON.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	textures->Add(ID_TEX_WHIP, L"Texture\\Weapons\\WHIP.png", D3DCOLOR_XRGB(255, 0, 255));
 	CSprites * sprites = CSprites::GetInstance();
 	CAnimations * animations = CAnimations::GetInstance();
 	//ADD SPRITES OF GROUND
@@ -164,6 +171,12 @@ void LoadResources()
 	sprites->Add(20071, 915, 67, 955, 134, texSimon);//simon sit atack left
 	sprites->Add(20072, 491, 132, 528, 195, texSimon);
 	sprites->Add(20073, 550, 132, 598, 195, texSimon);
+
+	//LPDIRECT3DTEXTURE9 texWhip = textures->Get(ID_TEX_WHIP);
+
+	//sprites->Add(20081, 915, 67, 955, 134, texWhip);//Add whip attack right
+	//sprites->Add(20082, 491, 132, 528, 195, texWhip);
+	//sprites->Add(20083, 550, 132, 598, 195, texWhip);
 	//sprites->Add(20041, 194, 2, 240, 65, texSimon);//Simon jump right
 	//Add Animation Ground
 	LPANIMATION ani;
@@ -249,6 +262,7 @@ void LoadResources()
 	animations->Add(271, ani);
 	simon->AddAnimation(271);
 
+
 	simon->SetPosition(0.0f, 100.0f);
 	objects.push_back(simon);
 }
@@ -270,8 +284,18 @@ void Update(DWORD dt)
 
 	for (int i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt );
+		objects[i]->Update(dt,&coObjects);
 	}
+
+
+	// Update camera to follow mario
+	float cx, cy;
+	simon->GetPosition(cx, cy);
+
+	cx -= SCREEN_WIDTH / 2;
+	cy -= SCREEN_HEIGHT / 2;
+
+	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
 }
 
 /*

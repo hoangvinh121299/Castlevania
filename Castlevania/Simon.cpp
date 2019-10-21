@@ -1,30 +1,63 @@
 ﻿#include "Simon.h"
 #include "Game.h"
+#include "Whip.h"
+#include <algorithm>
 DWORD now;
-void Simon::Update(DWORD dt)
+Whip *whip;
+//Simon::Simon()
+//{
+//	whip = new Whip();
+//	whip->AddAnimation(271);
+//}
+void Simon::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt);
 	// simple fall down
 	DWORD now = GetTickCount();
 	vy += SIMON_GRAVITY * dt;
-	y += dy;
-	x += dx;
-	if (y >= 100)
-	{
-		vy = 0; y = 100.0f;
-	}
-	//
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+	coEvents.clear();
+	// turn off collision when die 
 	if (this->attack != 0)
 	{
 		//
 		if (GetTickCount() - this->attack > 400) //thời gian render 4 sprits là 400. render xong 4 cái thì reset.
 		{
-			this->attack = 0;//reset
+			this->attack= 0;//reset
+			this->atk = 0;
 		}
-
 	}
-	//
-	//// simple screen edge collision!!!
+	if (state != SIMON_STATE_DIE)
+		CalcPotentialCollisions(coObjects, coEvents);
+	//// reset untouchable timer if untouchable time has passed
+	//if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	//{
+	//	untouchable_start = 0;
+	//	untouchable = 0;
+	//}
+	// No collision occured, proceed normally
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	}
+	else
+	{
+		if (fx > 0)
+		{
+			fx = 0;
+		}
+		float min_tx, min_ty, nx = 0, ny;
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
+		// block 
+		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+		y += min_ty * dy + ny * 0.4f;
+		if (nx != 0) vx = 0;
+		if (ny != 0) vy = 0;
+		//
+		//// simple screen edge collision!!!
+	}
 }
 void Simon::Render()
 {
@@ -36,15 +69,37 @@ void Simon::Render()
 				if (atk != 0)
 				{
 					
-					if (fx < 0)ani = SIMON_ANI_ATTACK_SIT_RIGHT;
+					if (fx < 0)
+					{
+						ani = SIMON_ANI_ATTACK_SIT_RIGHT;
+						OutputDebugString(L"ATTACK Sit right");
+					}
+					else if (fx > 0)
+					{
+						ani = SIMON_ANI_ATTACK_AIR_RIGHT;
+					}
 					else
-						ani = SIMON_ANI_ATTACK_RIGHT; 
+					{
+						OutputDebugString(L"ATTACK  right");
+						ani = SIMON_ANI_ATTACK_RIGHT;
+					}
 				}
 				else
 			{
-				if (fx < 0)ani = SIMON_ANI_SIT_RIGHT;
-				else
-					ani = SIMON_ANI_IDLE_RIGHT;
+					if (fx < 0)
+					{
+						OutputDebugString(L" Sit right");
+						ani = SIMON_ANI_SIT_RIGHT;
+					}
+					else if (fx > 0)
+					{
+						ani = SIMON_ANI_JUMP_RIGHT;
+					}
+					else
+					{
+						ani = SIMON_ANI_IDLE_RIGHT;
+						OutputDebugString(L"Right idle");
+					}
 			}
 		}
 		else
@@ -53,12 +108,20 @@ void Simon::Render()
 			{
 				
 				if (fx < 0)ani = SIMON_ANI_ATTACK_SIT_LEFT;
+				else if (fx > 0)
+				{
+					ani = SIMON_ANI_ATTACK_AIR_LEFT;
+				}
 				else
 					ani = SIMON_ANI_ATTACK_LEFT;
 			}
 			else
 			{
 				if (fx < 0)ani = SIMON_ANI_SIT_LEFT;
+				else if (fx > 0)
+				{
+					ani = SIMON_ANI_JUMP_LEFT;
+				}
 				else
 					ani = SIMON_ANI_IDLE_LEFT;
 			}
@@ -69,25 +132,38 @@ void Simon::Render()
 		
 		if (atk != 0)
 		{
-			vx = 0;
+			if (fx > 0)
+				ani = SIMON_ANI_ATTACK_AIR_RIGHT;
+			else
 			ani = SIMON_ANI_ATTACK_RIGHT;
 		}
 		else
-		ani = SIMON_ANI_WALKING_RIGHT;
+		{
+			if (fx > 0)
+				ani = SIMON_ANI_JUMP_RIGHT;
+			else
+				ani = SIMON_ANI_WALKING_RIGHT;
+		}
 	}
 	else
 	{
-		
 		if (atk != 0)
 		{
+			if (fx > 0)
+				ani = SIMON_ANI_ATTACK_AIR_LEFT;
+			else
 			ani = SIMON_ANI_ATTACK_LEFT;
-			vx = 0;
 		}
 		else
-		ani = SIMON_ANI_WALKING_LEFT;
+		{
+			if (fx > 0)
+				ani = SIMON_ANI_JUMP_LEFT;
+			else
+			ani = SIMON_ANI_WALKING_LEFT;
+		}
 	}
 	//render simon jump
-	if (vy != 0)
+	/*if (fx=1)
 	{
 
 		if (nx > 0)
@@ -104,7 +180,7 @@ void Simon::Render()
 			else
 			ani = SIMON_ANI_JUMP_LEFT;
 		}
-	}
+	}*/
 	//render simon attack
 	/*if (now >= SIMON_ATTACK_SPEED)
 	{
@@ -137,40 +213,29 @@ void Simon::SetState(int state)
 	case SIMON_STATE_WALKING_RIGHT:
 		vx = SIMON_WALKING_SPEED;
 		nx = 1;
-		fx = 0;
-		atk = 0;
 		break;
 	case SIMON_STATE_WALKING_LEFT:
 		vx = -SIMON_WALKING_SPEED;
 		nx = -1;
-		fx = 0;
-		atk = 0;
 		break;
 	case SIMON_STATE_JUMP:
 		fx = 1;
-		atk = 0;
-		if (y == 100)
-		{
-			vy = -SIMON_JUMP_SPEED_Y;
-		}
+		vy = -SIMON_JUMP_SPEED_Y;
 		break;
 	case SIMON_STATE_SIT:
 		vx = 0;
 		fx = -1;
-		atk = 0;
 		break;
 	case SIMON_STATE_IDLE:
 		vx = 0;
-		fx = 0;
-		atk = 0;
 		break;
 	case SIMON_STATE_ATTACK:
 		atk = 1;
 		vx = 0;
-		/*this->animations[SIMON_ANI_ATTACK_RIGHT]->ResetAni(); *///này ông tự sửa SIMON_ANI
-		//=))
-		//whip->ResetAnimation();
+		///*whip->SetPosition();*/
+		//whip->Render();
 		this->attack = GetTickCount(); //start attack
+		break;
 	/*case SIMON_STATE_SIT:
 		vx = 0;
 		break;*/

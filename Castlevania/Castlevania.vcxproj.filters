@@ -36,6 +36,12 @@
     <ClInclude Include="Simon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Whip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="class1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -60,6 +66,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Simon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Whip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="class1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

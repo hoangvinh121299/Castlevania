@@ -39,11 +39,12 @@ private:
 public:
 	DWORD attack;
 public:
-	void Update(DWORD dt);
+	void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
+	/*Simon();*/
 	void SetState(int state);
 	int getState() { return this->state; }
-	void setAttack(int atk) { this->atk = atk; }
-	int getAttack() { return this->atk; }
+	void setisJumping(int fx) { this->fx = fx; }
+	int getisJumping() { return this->fx; }
 	virtual void Render();
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 };
