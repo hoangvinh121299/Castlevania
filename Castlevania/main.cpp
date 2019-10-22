@@ -63,14 +63,14 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_SPACE:
-		if(simon->getisJumping()==0)
+		if (simon->getisJumping() == 0)
 		{
 			simon->SetState(SIMON_STATE_JUMP);
 		}
 		break;
 	case DIK_Z:
 	{
-		if (simon->attack == 0)
+		if (simon->attackTime == 0)
 		{
 			simon->SetState(SIMON_STATE_ATTACK);
 		}
@@ -95,7 +95,7 @@ void CSampleKeyHander::OnKeyUp(int KeyCode)
 
 void CSampleKeyHander::KeyState(BYTE *states)
 {
-	if (simon->attack != 0)
+	if (simon->attackTime != 0)
 		return;
 	// disable control key when Mario die 
 	if (simon->GetState() == SIMON_STATE_DIE) return;
@@ -142,35 +142,26 @@ void LoadResources()
 	sprites->Add(10001, 0, 0,31,31 ,texGround);
 	//ADD SPRITES OF SIMON
 	LPDIRECT3DTEXTURE9 texSimon = textures->Get(ID_TEX_SIMON);
-	sprites->Add(20001,431,2,468,65,texSimon);//SIMON IDLE RIGHT
-	sprites->Add(20002, 374, 2, 400, 65, texSimon);
-	sprites->Add(20003, 314, 2, 340, 65, texSimon);
-	sprites->Add(20004, 254, 2, 280, 65, texSimon);
+	sprites->Add(20001,0,0,60,66,texSimon);//SIMON IDLE 
+	sprites->Add(20002, 60, 0, 120, 66, texSimon);
+	sprites->Add(20003, 120, 0, 180, 66, texSimon);
+	sprites->Add(20004, 180, 0, 240, 66, texSimon);
 
-	sprites->Add(20011, 491, 2, 528, 65, texSimon);//SIMON IDLE LEFT
-	sprites->Add(20012, 551, 2, 588, 65, texSimon);
-	sprites->Add(20013, 611, 2, 648, 65, texSimon);
-	sprites->Add(20014, 671, 2, 708, 65, texSimon);
 
-	sprites->Add(20021, 194, 2, 240, 65, texSimon);//Simon jump right
+	sprites->Add(20021, 240, 0, 300, 66, texSimon);//Simon jump or sit
 
-	sprites->Add(20031, 731, 2, 758, 65, texSimon);//Simon jump left
 
-	sprites->Add(20041, 130, 2, 177, 65, texSimon);//simon atack right
-	sprites->Add(20042, 70, 2, 115, 65, texSimon);
-	sprites->Add(20043, 10, 2, 62, 65, texSimon);
+	sprites->Add(20041, 300, 0, 360, 66, texSimon);//simon atack 
+	sprites->Add(20042, 360, 0,420 , 66, texSimon);
+	sprites->Add(20043, 420, 0, 480, 66, texSimon);
 
-	sprites->Add(20051, 792, 2, 829, 65, texSimon);//simon atack left
-	sprites->Add(20052, 848, 2,897 , 65, texSimon);
-	sprites->Add(20053, 908, 2, 958, 65, texSimon);
 
-	sprites->Add(20061,0, 67, 40, 134, texSimon);//simon sit atack right
-	sprites->Add(20062, 430,132, 481, 195, texSimon);
-	sprites->Add(20063, 370, 132, 421, 195,texSimon);
 
-	sprites->Add(20071, 915, 67, 955, 134, texSimon);//simon sit atack left
-	sprites->Add(20072, 491, 132, 528, 195, texSimon);
-	sprites->Add(20073, 550, 132, 598, 195, texSimon);
+	sprites->Add(20061, 420, 66, 480, 132, texSimon);//simon sit atack 
+	sprites->Add(20062, 0,  132, 60,198, texSimon);
+	sprites->Add(20063, 60, 132,120 , 198,texSimon);
+
+
 
 	//LPDIRECT3DTEXTURE9 texWhip = textures->Get(ID_TEX_WHIP);
 
@@ -198,10 +189,6 @@ void LoadResources()
 	animations ->Add(200, ani);
 	simon->AddAnimation(200);
 
-	ani = new CAnimation(100);//Simon_Ani_IDLE_left
-	ani->Add(20011);
-	animations->Add(201, ani);
-	simon->AddAnimation(201);
 
 	ani = new CAnimation(100);//simon walking right
 	ani->Add(20001);
@@ -211,39 +198,23 @@ void LoadResources()
 	animations->Add(210, ani);
 	simon->AddAnimation(210);
 
-	ani = new CAnimation(100);//simon walking left
-	ani->Add(20011);
-	ani->Add(20012);
-	ani->Add(20013);
-	ani->Add(20014);
-	animations->Add(211, ani);//simon walking left
-	simon->AddAnimation(211);
+
 	
 	ani = new CAnimation(100);//Simon_Ani_jump_RIGHT
 	ani->Add(20021);
-	animations->Add(221, ani);
-	simon->AddAnimation(221);
+	animations->Add(220, ani);
+	simon->AddAnimation(220);
 	
-	ani = new CAnimation(100);//Simon_Ani_jump_left
-	ani->Add(20031);
-	animations->Add(231, ani);
-	simon->AddAnimation(231);
 
 	ani = new CAnimation(100);//simon atack right 
 	ani->Add(20001);
 	ani->Add(20041);
 	ani->Add(20042);
 	ani->Add(20043);
-	animations->Add(241, ani);
-	simon->AddAnimation(241);
+	animations->Add(240, ani);
+	simon->AddAnimation(240);
 
-	ani = new CAnimation(100);//simon atack left
-	ani->Add(20011);
-	ani->Add(20051);
-	ani->Add(20052);
-	ani->Add(20053);
-	animations->Add(251, ani);
-	simon->AddAnimation(251);
+
 
 
 	ani = new CAnimation(100);//simon atack sit right
@@ -251,16 +222,10 @@ void LoadResources()
 	ani->Add(20061);
 	ani->Add(20062);
 	ani->Add(20063);
-	animations->Add(261, ani);
-	simon->AddAnimation(261);
+	animations->Add(260, ani);
+	simon->AddAnimation(260);
 
-	ani = new CAnimation(100);//simon atack sit left
-	ani->Add(20031);
-	ani->Add(20071);
-	ani->Add(20072);
-	ani->Add(20073);
-	animations->Add(271, ani);
-	simon->AddAnimation(271);
+
 
 
 	simon->SetPosition(0.0f, 100.0f);

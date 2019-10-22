@@ -1,8 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
-#define GROUND_BBOX_WIDTH  16
-#define GROUND_BBOX_HEIGHT 16
+#define GROUND_BBOX_WIDTH  35
+#define GROUND_BBOX_HEIGHT 35
 
 class Ground : public CGameObject
 {

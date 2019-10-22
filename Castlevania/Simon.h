@@ -14,37 +14,31 @@
 #define SIMON_STATE_ATTACK          500
 #define SIMON_STATE_DIE				600
 //SIMON_ANI_NORMAL
-#define SIMON_ANI_IDLE_RIGHT		0
-#define SIMON_ANI_IDLE_LEFT			1
-#define SIMON_ANI_WALKING_RIGHT		2
-#define SIMON_ANI_WALKING_LEFT		3
-#define SIMON_ANI_JUMP_LEFT 5
-#define SIMON_ANI_JUMP_RIGHT 4
-#define SIMON_ANI_SIT_RIGHT    4
-#define SIMON_ANI_SIT_LEFT     5
-#define SIMON_ANI_ATTACK_RIGHT 6
-#define SIMON_ANI_ATTACK_LEFT 7
-#define SIMON_ANI_ATTACK_AIR_RIGHT 6
-#define SIMON_ANI_ATTACK_AIR_LEFT  7
-#define SIMON_ANI_ATTACK_SIT_RIGHT 8
-#define SIMON_ANI_ATTACK_SIT_LEFT 9
+#define SIMON_ANI_IDLE		0
+#define SIMON_ANI_WALKING	1	
+#define SIMON_ANI_JUMP 2
+#define SIMON_ANI_SIT    2
+#define SIMON_ANI_ATTACK 3
+#define SIMON_ANI_ATTACK_AIR 3
+#define SIMON_ANI_ATTACK_SIT 4
 
-#define SIMON_BBOX_WIDTH  33
-#define SIMON_BBOX_HEIGHT 62
+#define SIMON_BBOX_WIDTH  45
+#define SIMON_BBOX_HEIGHT 60
 class Simon:public CGameObject
 {
 private:
-	int fx; //check is simon is sit or jump
-	int atk;//check is simon is attack or not
+	int isJumping; //check  simon isjumping ?
+	int isAttacking;//check simon is attack or not
+	int isSitting; // Check  Simon is siiting or not 
 public:
-	DWORD attack;
+	DWORD attackTime;
 public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	/*Simon();*/
 	void SetState(int state);
 	int getState() { return this->state; }
-	void setisJumping(int fx) { this->fx = fx; }
-	int getisJumping() { return this->fx; }
+	void setisJumping(int isJumping) { this->isJumping = isJumping; }
+	int getisJumping() { return this->isJumping; }
 	virtual void Render();
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 };
