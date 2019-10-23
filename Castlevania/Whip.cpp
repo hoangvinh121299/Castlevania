@@ -1,7 +1,8 @@
 #include "Whip.h"
 void Whip::Render()
 {
-	animations[0] -> Render(x, y);
+	animations[0] -> Render(nx,x,y);
+	OutputDebugString(L"WHIP IS RENDERED");
 }
 void Whip::Update(DWORD dt)
 {

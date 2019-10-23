@@ -34,7 +34,7 @@ public:
 	DWORD attackTime;
 public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
-	/*Simon();*/
+	Simon();
 	void SetState(int state);
 	int getState() { return this->state; }
 	void setisJumping(int isJumping) { this->isJumping = isJumping; }

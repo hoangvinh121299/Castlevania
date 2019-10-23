@@ -3,12 +3,13 @@
 #include "Whip.h"
 #include <algorithm>
 DWORD now;
-Whip *whip;
-//Simon::Simon()
-//{
-//	whip = new Whip();
-//	whip->AddAnimation(271);
-//}
+static Whip *whip;
+Simon::Simon()
+{
+    whip = new Whip();
+	whip->AddAnimation(300);
+	whip->SetPosition(x - 85, y + 3);
+}
 void Simon::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	CGameObject::Update(dt);
@@ -19,10 +20,19 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
 	// turn off collision when die 
+	whip->nx = this->nx;
+	/*if (state == SIMON_STATE_SIT&&isAttacking==1)
+	{
+		whip->SetPosition(x - 85, y + 10);
+	}*/
+	if(isSitting==1)
+		whip->SetPosition(x - 85, y + 15);
+	else
+	whip->SetPosition(x - 85, y + 3);
 	if (this->attackTime != 0)
 	{
 		//
-		if (GetTickCount() - this->attackTime > 400) //thời gian render 4 sprits là 400. render xong 4 cái thì reset.
+		if (GetTickCount() - this->attackTime > 300) //thời gian render 4 sprits là 400. render xong 4 cái thì reset.
 		{
 			this->attackTime= 0;//reset
 			this->isAttacking = 0;
@@ -68,6 +78,8 @@ void Simon::Render()
 		{
 			if (isAttacking != 0)
 			{
+				
+				whip->Render();
 				if (isJumping != 0)
 					ani = SIMON_ANI_ATTACK_AIR;
 				else
@@ -97,6 +109,7 @@ void Simon::Render()
 		{
 			if (isAttacking != 0)
 			{
+				whip->Render();
 				if (isJumping != 0)
 					ani = SIMON_ANI_ATTACK_AIR;
 				else
@@ -119,6 +132,7 @@ void Simon::Render()
 	{
 		if (isAttacking != 0)
 		{
+			whip->Render();
 			if (isJumping != 0)
 				ani = SIMON_ANI_ATTACK_AIR;
 			else
@@ -142,6 +156,7 @@ void Simon::Render()
 	{
 		if (isAttacking != 0)
 		{
+			whip->Render();
 			if (isJumping != 0)
 				ani = SIMON_ANI_ATTACK_AIR;
 			else
@@ -195,8 +210,11 @@ void Simon::SetState(int state)
 	case SIMON_STATE_ATTACK:
 		isAttacking = 1;
 		vx = 0;
-		///*whip->SetPosition();*/
-		//whip->Render();
+	
+		this->animations[SIMON_ANI_ATTACK]->ResetAni();
+		this->animations[SIMON_ANI_ATTACK_AIR]->ResetAni();
+		this->animations[SIMON_ANI_ATTACK_SIT]->ResetAni();
+		whip->animations[0]->ResetAni();
 		this->attackTime = GetTickCount(); //start attack
 		break;
 	/*case SIMON_STATE_SIT:
@@ -257,9 +275,9 @@ void Simon::SetState(int state)
 }
 void Simon::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
-	left = x;
+	left = x+15;
 	top = y;
-	right = x + SIMON_BBOX_WIDTH;
-	bottom = y + SIMON_BBOX_HEIGHT;
+	right = left + 35;
+	bottom = top + SIMON_BBOX_HEIGHT;
 }
 

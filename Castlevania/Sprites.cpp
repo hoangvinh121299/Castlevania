@@ -43,7 +43,6 @@ void CAnimation::Add(int spriteId, DWORD time)
 {
 	int t = time;
 	if (time == 0) t = this->defaultTime;
-
 	LPSPRITE sprite = CSprites::GetInstance()->Get(spriteId);
 	LPANIMATION_FRAME frame = new CAnimationFrame(sprite, t);
 	frames.push_back(frame);

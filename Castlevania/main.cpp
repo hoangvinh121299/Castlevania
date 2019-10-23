@@ -134,7 +134,7 @@ void LoadResources()
 	textures->Add(ID_TEX_GROUND, L"Textures\\Ground\\2.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_SIMON, L"Textures\\Simon\\SIMON.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
-	textures->Add(ID_TEX_WHIP, L"Texture\\Weapons\\WHIP.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_WHIP, L"Textures\\Weapons\\WHIP.png", D3DCOLOR_XRGB(255, 0, 255));
 	CSprites * sprites = CSprites::GetInstance();
 	CAnimations * animations = CAnimations::GetInstance();
 	//ADD SPRITES OF GROUND
@@ -163,13 +163,11 @@ void LoadResources()
 
 
 
-	//LPDIRECT3DTEXTURE9 texWhip = textures->Get(ID_TEX_WHIP);
+	LPDIRECT3DTEXTURE9 texWhip = textures->Get(ID_TEX_WHIP);
 
-	//sprites->Add(20081, 915, 67, 955, 134, texWhip);//Add whip attack right
-	//sprites->Add(20082, 491, 132, 528, 195, texWhip);
-	//sprites->Add(20083, 550, 132, 598, 195, texWhip);
-	//sprites->Add(20041, 194, 2, 240, 65, texSimon);//Simon jump right
-	//Add Animation Ground
+	sprites->Add(30001, 0,   0, 240, 66, texWhip);//Add whip attack 
+	sprites->Add(30002, 240, 0, 480, 66, texWhip);
+	sprites->Add(30003, 480, 0, 720, 66, texWhip);
 	LPANIMATION ani;
 	ani = new CAnimation(100);
 	ani->Add(10001);
@@ -181,6 +179,13 @@ void LoadResources()
 		ground->SetPosition(0+31*i,230);
 		objects.push_back(ground);
 	}
+	//Add Whip animation
+	ani = new CAnimation(100);
+	ani->Add(30001);
+	ani->Add(30002);
+	ani->Add(30003);
+	animations->Add(300, ani);
+
 	//Add Animation Simon
 	 simon = new Simon();
 
@@ -205,31 +210,29 @@ void LoadResources()
 	animations->Add(220, ani);
 	simon->AddAnimation(220);
 	
-
 	ani = new CAnimation(100);//simon atack right 
-	ani->Add(20001);
 	ani->Add(20041);
 	ani->Add(20042);
 	ani->Add(20043);
 	animations->Add(240, ani);
 	simon->AddAnimation(240);
 
-
-
-
 	ani = new CAnimation(100);//simon atack sit right
-	ani->Add(20021);
+
 	ani->Add(20061);
 	ani->Add(20062);
 	ani->Add(20063);
 	animations->Add(260, ani);
 	simon->AddAnimation(260);
 
-
-
-
 	simon->SetPosition(0.0f, 100.0f);
 	objects.push_back(simon);
+
+	//whip = new Whip();
+	//whip->SetPosition(0, 100.0f);
+	//whip->AddAnimation(300);
+	//objects.push_back(whip);
+
 }
 
 /*
