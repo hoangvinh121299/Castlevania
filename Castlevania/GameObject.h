@@ -54,7 +54,11 @@ public:
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float &x, float &y) { x = this->x; y = this->y; }
 	void GetSpeed(float &vx, float &vy) { vx = this->vx; vy = this->vy; }
-
+	//Check 2 boundingbox of 2 object is Collide
+	bool checkAABB(float left_a, float top_a, float right_a, float bottom_a, float left_b, float top_b, float right_b, float bottom_b)
+	{
+		return left_a < right_b && right_a > left_b && top_a < bottom_b && bottom_a > top_b;
+	}
 	int GetState() { return this->state; }
 
 	void RenderBoundingBox();

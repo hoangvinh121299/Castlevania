@@ -32,7 +32,6 @@ private:
 	int isSitting; // Check  Simon is siiting or not 
 public:
 	DWORD attackTime;
-public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
 	Simon();
 	void SetState(int state);

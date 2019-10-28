@@ -29,6 +29,7 @@
 #include "Ground.h"
 #include "Simon.h"
 #include "Whip.h"
+#include "Torch.h"
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"CASTLEVANIA"
 
@@ -42,10 +43,12 @@
 #define ID_TEX_ENEMY 10
 #define ID_TEX_GROUND 20
 #define ID_TEX_WHIP 30
+#define ID_TEX_TORCH 40
 
 CGame *game;
 Simon *simon;
-//Whip *whip;
+Torch *torch;
+Whip *whis;
 vector<LPGAMEOBJECT> objects;
 
 class CSampleKeyHander : public CKeyEventHandler
@@ -135,6 +138,7 @@ void LoadResources()
 	textures->Add(ID_TEX_SIMON, L"Textures\\Simon\\SIMON.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_WHIP, L"Textures\\Weapons\\WHIP.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_TORCH, L"Textures\\Ground\\torch.png", D3DCOLOR_XRGB(255, 0, 255));
 	CSprites * sprites = CSprites::GetInstance();
 	CAnimations * animations = CAnimations::GetInstance();
 	//ADD SPRITES OF GROUND
@@ -162,6 +166,7 @@ void LoadResources()
 	sprites->Add(20063, 60, 132,120 , 198,texSimon);
 
 
+	//Add Animation Simon
 
 	LPDIRECT3DTEXTURE9 texWhip = textures->Get(ID_TEX_WHIP);
 
@@ -169,16 +174,7 @@ void LoadResources()
 	sprites->Add(30002, 240, 0, 480, 66, texWhip);
 	sprites->Add(30003, 480, 0, 720, 66, texWhip);
 	LPANIMATION ani;
-	ani = new CAnimation(100);
-	ani->Add(10001);
-	animations->Add(100, ani);
-	for (int i = 0; i < SCREEN_WIDTH / 31; i++)
-	{
-		Ground *ground = new Ground();
-		ground->AddAnimation(100);
-		ground->SetPosition(0+31*i,230);
-		objects.push_back(ground);
-	}
+
 	//Add Whip animation
 	ani = new CAnimation(100);
 	ani->Add(30001);
@@ -186,12 +182,11 @@ void LoadResources()
 	ani->Add(30003);
 	animations->Add(300, ani);
 
-	//Add Animation Simon
-	 simon = new Simon();
+	simon = new Simon();
 
 	ani = new CAnimation(100);//Simon_Ani_IDLE_RIGHT
 	ani->Add(20001);
-	animations ->Add(200, ani);
+	animations->Add(200, ani);
 	simon->AddAnimation(200);
 
 
@@ -204,12 +199,12 @@ void LoadResources()
 	simon->AddAnimation(210);
 
 
-	
+
 	ani = new CAnimation(100);//Simon_Ani_jump_RIGHT
 	ani->Add(20021);
 	animations->Add(220, ani);
 	simon->AddAnimation(220);
-	
+
 	ani = new CAnimation(100);//simon atack right 
 	ani->Add(20041);
 	ani->Add(20042);
@@ -224,10 +219,38 @@ void LoadResources()
 	ani->Add(20063);
 	animations->Add(260, ani);
 	simon->AddAnimation(260);
-
-	simon->SetPosition(0.0f, 100.0f);
 	objects.push_back(simon);
+	simon->SetPosition(0.0f, 100.0f);
 
+	ani = new CAnimation(100);
+	ani->Add(10001);
+	animations->Add(100, ani);
+	for (int i = 0; i < SCREEN_WIDTH / 31; i++)
+	{
+		Ground *ground = new Ground();
+		ground->AddAnimation(100);
+		ground->SetPosition(0+31*i,230);
+		objects.push_back(ground);
+	}
+	
+
+	
+	
+	//Add Sprite Torch
+	LPDIRECT3DTEXTURE9 texTorch = textures->Get(ID_TEX_TORCH);
+	sprites->Add(40001, 0, 0, 32, 64, texTorch);
+	sprites->Add(40002, 32, 0, 64, 64, texTorch);
+	ani = new CAnimation(100);
+	ani->Add(40001);
+	ani->Add(40002);
+	animations->Add(400, ani);
+	for (int i = 0; i < 4; i++)
+	{
+		torch = new Torch();
+		torch->AddAnimation(400);
+		torch->SetPosition(200 + 100* i, 170);
+		objects.push_back(torch);
+	}
 	//whip = new Whip();
 	//whip->SetPosition(0, 100.0f);
 	//whip->AddAnimation(300);
@@ -398,4 +421,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	return 0;
 }
-//FIX LỖI SIMON, ADD THÊM HIỆU ỨNG TẤN CÔNG, CHO SIMON TƯƠNG TÁC TRỌNG LỰC
+//Sửa con mẹ nó cái lỗi trùng nhau tọa độ boudingbox thì không va chạm hộ bố  mày cái

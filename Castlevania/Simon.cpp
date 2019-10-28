@@ -2,13 +2,13 @@
 #include "Game.h"
 #include "Whip.h"
 #include <algorithm>
+#include "debug.h"
 DWORD now;
-static Whip *whip;
+Whip *whip;
 Simon::Simon()
 {
     whip = new Whip();
 	whip->AddAnimation(300);
-	whip->SetPosition(x - 85, y + 3);
 }
 void Simon::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
@@ -28,16 +28,17 @@ void Simon::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	if(isSitting==1)
 		whip->SetPosition(x - 85, y + 15);
 	else
-	whip->SetPosition(x - 85, y + 3);
+	    whip->SetPosition(x - 85, y + 3);
 	if (this->attackTime != 0)
 	{
-		//
-		if (GetTickCount() - this->attackTime > 300) //thời gian render 4 sprits là 400. render xong 4 cái thì reset.
+		if (GetTickCount() - this->attackTime > 300)
 		{
 			this->attackTime= 0;//reset
 			this->isAttacking = 0;
+			whip->animations[0]->ResetAni();
 		}
 	}
+	whip->Update(dt, coObjects);
 	if (state != SIMON_STATE_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
 	//// reset untouchable timer if untouchable time has passed
@@ -94,12 +95,12 @@ void Simon::Render()
 				if (isJumping != 0)
 				{
 					ani = SIMON_ANI_JUMP;
-					OutputDebugString(L"SIMON JUMP RIGHT \n");
+					
 				}
 				else
 				{
 					ani = SIMON_ANI_IDLE;
-					OutputDebugString(L"SIMON IDLE RIGHT \n");
+			
 				}
 				if (isSitting != 0)
 					ani = SIMON_ANI_SIT;
@@ -210,11 +211,10 @@ void Simon::SetState(int state)
 	case SIMON_STATE_ATTACK:
 		isAttacking = 1;
 		vx = 0;
-	
+		
 		this->animations[SIMON_ANI_ATTACK]->ResetAni();
 		this->animations[SIMON_ANI_ATTACK_AIR]->ResetAni();
 		this->animations[SIMON_ANI_ATTACK_SIT]->ResetAni();
-		whip->animations[0]->ResetAni();
 		this->attackTime = GetTickCount(); //start attack
 		break;
 	/*case SIMON_STATE_SIT:

@@ -64,9 +64,11 @@ class CAnimation
 	vector<LPANIMATION_FRAME> frames;
 public:
 	CAnimation(int defaultTime) { this->defaultTime = defaultTime; lastFrameTime = -1; currentFrame = -1; }
+	int getCurrentFrame() { return this->currentFrame; }
 	void Add(int spriteId, DWORD time = 0);
 	void Render(float x, float y, int alpha = 255);
 	void ResetAni();
+	void setCurrentFrame(int currentFrame) { this->currentFrame = currentFrame; }
 };
 
 typedef CAnimation *LPANIMATION;
